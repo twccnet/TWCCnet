@@ -41,7 +41,7 @@ class GCN_Layer(nn.Module):
         output = self.gcn_layer(input)
         return output
 
-class STGeoModule(nn.Module):
+class TSTCModule(nn.Module):
     def __init__(self,grid_in_channel,num_of_gru_layers,seq_len,
                 gru_hidden_size,num_of_target_time_feature):
         """[summary]
@@ -53,7 +53,7 @@ class STGeoModule(nn.Module):
             gru_hidden_size {int} -- the hidden size of GRU
             num_of_target_time_feature {int} -- the number of target time feature，24(hour)+7(week)+1(holiday)=32
         """
-        super(STGeoModule,self).__init__()
+        super(TSTCModule,self).__init__()
         self.grid_conv = nn.Sequential(
             nn.Conv2d(in_channels=grid_in_channel,out_channels=64,kernel_size=3,padding=1),
             nn.ReLU(),
@@ -99,7 +99,7 @@ class STGeoModule(nn.Module):
     
         return grid_output
 
-class STSemModule(nn.Module):
+class WCCSTCModule(nn.Module):
     def __init__(self,num_of_graph_feature,nums_of_graph_filters,
                 seq_len,num_of_gru_layers,gru_hidden_size,
                 num_of_target_time_feature,north_south_map,west_east_map):
@@ -115,7 +115,7 @@ class STSemModule(nn.Module):
             west_east_map {int} -- the height of grid data
 
         """
-        super(STSemModule,self).__init__()
+        super(WCCSTCModule,self).__init__()
         self.north_south_map = north_south_map
         self.west_east_map = west_east_map
         self.road_gcn = nn.ModuleList()
@@ -238,7 +238,7 @@ class STSemModule(nn.Module):
         return graph_output
 
 
-class GSNet(nn.Module):
+class TWCCnet(nn.Module):
     def __init__(self,grid_in_channel,num_of_gru_layers,seq_len,pre_len,
                 gru_hidden_size,num_of_target_time_feature,
                 num_of_graph_feature,nums_of_graph_filters,
@@ -257,14 +257,14 @@ class GSNet(nn.Module):
             north_south_map {int} -- the weight of grid data
             west_east_map {int} -- the height of grid data
         """
-        super(GSNet,self).__init__()
+        super(TWCCnet,self).__init__()
         self.north_south_map = north_south_map
         self.west_east_map = west_east_map
 
-        self.st_geo_module = STGeoModule(grid_in_channel,num_of_gru_layers,seq_len,
+        self.st_geo_module = TSTCModule(grid_in_channel,num_of_gru_layers,seq_len,
                                         gru_hidden_size,num_of_target_time_feature)
 
-        self.st_sem_module = STSemModule(num_of_graph_feature,nums_of_graph_filters,
+        self.st_sem_module = WCCSTCModule(num_of_graph_feature,nums_of_graph_filters,
                                         seq_len,num_of_gru_layers,gru_hidden_size,
                                         num_of_target_time_feature,north_south_map,west_east_map)
         
