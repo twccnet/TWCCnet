@@ -27,7 +27,7 @@ class GCN_Layer(nn.Module):
             nn.ReLU()
         )
     def forward(self,input,adj):
-        
+        """
         Arguments:
             input {Tensor} -- signal matrix,shape (batch_size,N,T*D)
             adj {np.array} -- adjacent matrix，shape (N,N)
